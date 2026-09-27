@@ -1,34 +1,30 @@
 package pe.edu.cibertec.tarjetas.controller;
 
-import pe.edu.cibertec.tarjetas.entity.Tarjeta;
+import pe.edu.cibertec.tarjetas.dto.TarjetaResponseDTO;
 import pe.edu.cibertec.tarjetas.service.TarjetaService;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/tarjetas")
+@RequiredArgsConstructor
 public class TarjetaController {
 
-    private final TarjetaService service;
-
-    public TarjetaController(TarjetaService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public ResponseEntity<Tarjeta> registrar(@RequestBody Tarjeta tarjeta) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.registrar(tarjeta));
-    }
+    private final TarjetaService tarjetaService;
 
     @GetMapping
-    public ResponseEntity<List<Tarjeta>> listar() {
-        return ResponseEntity.ok(service.listarTodos());
+    public ResponseEntity<List<TarjetaResponseDTO>> listarTarjetas() {
+        return ResponseEntity.ok(tarjetaService.listarTodas());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tarjeta> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.obtenerPorId(id));
+    public ResponseEntity<TarjetaResponseDTO> consultarPorId(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(tarjetaService.buscarPorId(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
